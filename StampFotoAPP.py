@@ -28,6 +28,8 @@ if uploaded_file and bumdes and lokasi and keterangan:
     nama_file = bumdes.replace(" ", "_")
     nama_file = "".join(c for c in nama_file if c.isalnum() or c == "_")
     jam = now.strftime("%H:%M:%S")
+    file_name = f"{nama_file}_{timestamp}.jpg"
+    
 
     text = (
         f"BUMDES : {bumdes}\n"
