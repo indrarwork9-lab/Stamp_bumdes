@@ -30,7 +30,7 @@ if uploaded_file and bumdes and lokasi and keterangan:
     tanggal = now.strftime("%d-%m-%Y")
     jam = now.strftime("%H:%M:%S")
 
-    # WRAP TEXT AGAR TIDAK TERLALU PANJANG
+    # WRAP TEXT AGAR RAPI
     wrap_width = 40
     ket_wrap = "\n".join(textwrap.wrap(keterangan, wrap_width))
 
@@ -41,24 +41,40 @@ if uploaded_file and bumdes and lokasi and keterangan:
         f"TANGGAL : {tanggal}    JAM : {jam}"
     )
 
-    # HITUNG UKURAN TEKS (PALING STABIL)
-    bbox = font.getbbox(text)
-    text_width = bbox[2] - bbox[0]
-    text_height = bbox[3] - bbox[1]
+    lines = text.split("\n")
+
+    # HITUNG UKURAN TEKS
+    max_width = 0
+    total_height = 0
+
+    for line in lines:
+        bbox = font.getbbox(line)
+        w = bbox[2] - bbox[0]
+        h = bbox[3] - bbox[1]
+
+        if w > max_width:
+            max_width = w
+
+        total_height += h + 5
 
     padding = int(font_size / 2)
 
     x = int(img.width * 0.02)
-    y = img.height - text_height - (padding * 3)
+    y = img.height - total_height - (padding * 3)
 
-    # BACKGROUND KOTAK HITAM
+    # BACKGROUND KOTAK
     draw.rectangle(
-        (x-padding, y-padding, x+text_width+padding, y+text_height+padding),
+        (x-padding, y-padding, x+max_width+padding, y+total_height+padding),
         fill=(0,0,0)
     )
 
-    # TULISAN
-    draw.multiline_text((x,y), text, fill="white", font=font)
+    # TULIS TEKS
+    current_y = y
+    for line in lines:
+        draw.text((x, current_y), line, fill="white", font=font)
+        bbox = font.getbbox(line)
+        line_height = bbox[3] - bbox[1]
+        current_y += line_height + 5
 
     st.image(img)
 
