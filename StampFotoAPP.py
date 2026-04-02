@@ -1,6 +1,7 @@
 import streamlit as st
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
+from io import BytesIO
 
 st.title("Stamp Foto Dokumentasi BUMDES")
 
@@ -14,7 +15,8 @@ if uploaded_file and bumdes and lokasi and keterangan:
 
     img = Image.open(uploaded_file)
     draw = ImageDraw.Draw(img)
-    font = ImageFont.load_default()
+
+    font = ImageFont.truetype("DejaVuSans-Bold.ttf", 40)
 
     now = datetime.now()
     tanggal = now.strftime("%d-%m-%Y")
@@ -32,9 +34,9 @@ if uploaded_file and bumdes and lokasi and keterangan:
     text_width = bbox[2]-bbox[0]
     text_height = bbox[3]-bbox[1]
 
-    padding = 10
-    x = 20
-    y = img.height - text_height - 40
+    padding = 20
+    x = 30
+    y = img.height - text_height - 80
 
     draw.rectangle(
         (x-padding, y-padding, x+text_width+padding, y+text_height+padding),
@@ -45,8 +47,13 @@ if uploaded_file and bumdes and lokasi and keterangan:
 
     st.image(img)
 
+    buffer = BytesIO()
+    img.save(buffer, format="JPEG")
+    buffer.seek(0)
+
     st.download_button(
         "Download Foto",
-        data=img.tobytes(),
-        file_name="foto_dokumentasi.jpg"
+        data=buffer,
+        file_name="foto_dokumentasi.jpg",
+        mime="image/jpeg"
     )
