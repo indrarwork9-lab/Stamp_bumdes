@@ -16,6 +16,7 @@ if uploaded_file and bumdes and lokasi and keterangan:
     img = Image.open(uploaded_file)
     draw = ImageDraw.Draw(img)
 
+    # AUTO RESIZE FONT
     font_size = int(img.height / 25)
 
     try:
@@ -25,11 +26,7 @@ if uploaded_file and bumdes and lokasi and keterangan:
 
     now = datetime.now()
     tanggal = now.strftime("%d-%m-%Y")
-    nama_file = bumdes.replace(" ", "_")
-    nama_file = "".join(c for c in nama_file if c.isalnum() or c == "_")
     jam = now.strftime("%H:%M:%S")
-    file_name = f"{nama_file}_{timestamp}.jpg"
-    
 
     text = (
         f"BUMDES : {bumdes}\n"
@@ -40,8 +37,8 @@ if uploaded_file and bumdes and lokasi and keterangan:
 
     bbox = draw.multiline_textbbox((0,0), text, font=font)
 
-    text_width = bbox[2]-bbox[0]
-    text_height = bbox[3]-bbox[1]
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
 
     padding = int(font_size / 2)
 
@@ -61,10 +58,17 @@ if uploaded_file and bumdes and lokasi and keterangan:
     img.save(buffer, format="JPEG")
     buffer.seek(0)
 
+    # NAMA FILE OTOMATIS DARI BUMDES
+    nama_file = bumdes.replace(" ", "_")
+    nama_file = "".join(c for c in nama_file if c.isalnum() or c == "_")
+
+    timestamp = now.strftime("%Y%m%d_%H%M%S")
+
+    file_name = f"{nama_file}_{timestamp}.jpg"
+
     st.download_button(
-    "Download Foto",
-    data=buffer,
-    file_name=file_name,
-    mime="image/jpeg"
-        
+        "Download Foto",
+        data=buffer,
+        file_name=file_name,
+        mime="image/jpeg"
     )
