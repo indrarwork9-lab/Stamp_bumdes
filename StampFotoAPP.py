@@ -16,8 +16,14 @@ if uploaded_file and bumdes and lokasi and keterangan:
     img = Image.open(uploaded_file)
     draw = ImageDraw.Draw(img)
 
-    # AUTO RESIZE FONT
-    font_size = int(img.height / 25)
+    # AUTO RESIZE FONT LEBIH STABIL
+    font_size = int(min(img.width, img.height) / 30)
+    font_size = max(20, min(font_size, 60))
+
+try:
+    font = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
+except:
+    font = ImageFont.load_default()
 
     try:
         font = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
