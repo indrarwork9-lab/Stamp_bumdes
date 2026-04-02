@@ -60,7 +60,7 @@ if uploaded_file and bumdes and lokasi and keterangan:
     lines.append(f"BUMDES : {bumdes}")
     lines.extend(lokasi_lines)
     lines.extend(ket_lines)
-    lines.append(f"TANGGAL : {tanggal}    JAM : {jam}")
+    lines.append(f"TANGGAL : {tanggal}")
 
     # hitung ukuran teks
     max_width = 0
