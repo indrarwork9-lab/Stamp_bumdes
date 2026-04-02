@@ -16,15 +16,15 @@ if uploaded_file and bumdes and lokasi and keterangan:
     img = Image.open(uploaded_file)
     draw = ImageDraw.Draw(img)
 
-    # AUTO RESIZE FONT LEBIH STABIL
+    # AUTO RESIZE FONT STABIL
     font_size = int(min(img.width, img.height) / 30)
     font_size = max(20, min(font_size, 60))
 
-try:
-    font = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
-except:
-    font = ImageFont.load_default()
-    
+    try:
+        font = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
+    except:
+        font = ImageFont.load_default()
+
     now = datetime.now()
     tanggal = now.strftime("%d-%m-%Y")
     jam = now.strftime("%H:%M:%S")
@@ -36,21 +36,21 @@ except:
         f"TANGGAL : {tanggal}    JAM : {jam}"
     )
 
-    bbox = draw.multiline_textbbox((0,0), text, font=font)
-
-    text_width = bbox[2] - bbox[0]
-    text_height = bbox[3] - bbox[1]
+    # HITUNG UKURAN TEKS (ANTI ERROR STREAMLIT CLOUD)
+    text_width, text_height = draw.multiline_textsize(text, font=font)
 
     padding = int(font_size / 2)
 
     x = int(img.width * 0.02)
     y = img.height - text_height - (padding * 3)
 
+    # KOTAK HITAM BACKGROUND
     draw.rectangle(
         (x-padding, y-padding, x+text_width+padding, y+text_height+padding),
         fill=(0,0,0)
     )
 
+    # TULISAN
     draw.multiline_text((x,y), text, fill="white", font=font)
 
     st.image(img)
@@ -59,7 +59,7 @@ except:
     img.save(buffer, format="JPEG")
     buffer.seek(0)
 
-    # NAMA FILE OTOMATIS DARI BUMDES
+    # NAMA FILE DARI BUMDES
     nama_file = bumdes.replace(" ", "_")
     nama_file = "".join(c for c in nama_file if c.isalnum() or c == "_")
 
