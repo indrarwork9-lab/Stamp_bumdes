@@ -2,14 +2,34 @@ import streamlit as st
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
 from io import BytesIO
-import textwrap
 
 st.title("Stamp Foto Dokumentasi BUMDES")
+
+# fungsi untuk memecah teks agar turun baris
+def wrap_text(draw, text, font, max_width):
+    lines = []
+    words = text.split(" ")
+    current_line = ""
+
+    for word in words:
+        test_line = current_line + word + " "
+        bbox = font.getbbox(test_line)
+        width = bbox[2] - bbox[0]
+
+        if width <= max_width:
+            current_line = test_line
+        else:
+            lines.append(current_line.strip())
+            current_line = word + " "
+
+    lines.append(current_line.strip())
+    return lines
+
 
 uploaded_file = st.file_uploader("Upload Foto", type=["jpg","jpeg","png"])
 
 bumdes = st.text_input("Nama BUMDES")
-lokasi = st.text_input("Lokasi")
+lokasi = st.text_input("Lokasi / Alamat")
 keterangan = st.text_input("Keterangan")
 
 if uploaded_file and bumdes and lokasi and keterangan:
@@ -17,7 +37,7 @@ if uploaded_file and bumdes and lokasi and keterangan:
     img = Image.open(uploaded_file)
     draw = ImageDraw.Draw(img)
 
-    # AUTO RESIZE FONT
+    # ukuran font otomatis
     font_size = int(min(img.width, img.height) / 28)
     font_size = max(20, min(font_size, 55))
 
@@ -30,20 +50,19 @@ if uploaded_file and bumdes and lokasi and keterangan:
     tanggal = now.strftime("%d-%m-%Y")
     jam = now.strftime("%H:%M:%S")
 
-    # WRAP TEXT AGAR RAPI
-    wrap_width = 40
-    ket_wrap = "\n".join(textwrap.wrap(keterangan, wrap_width))
+    max_text_width = int(img.width * 0.9)
 
-    text = (
-        f"BUMDES : {bumdes}\n"
-        f"LOKASI : {lokasi}\n"
-        f"KETERANGAN : {ket_wrap}\n"
-        f"TANGGAL : {tanggal}    JAM : {jam}"
-    )
+    # auto wrap lokasi & keterangan
+    lokasi_lines = wrap_text(draw, f"LOKASI : {lokasi}", font, max_text_width)
+    ket_lines = wrap_text(draw, f"KETERANGAN : {keterangan}", font, max_text_width)
 
-    lines = text.split("\n")
+    lines = []
+    lines.append(f"BUMDES : {bumdes}")
+    lines.extend(lokasi_lines)
+    lines.extend(ket_lines)
+    lines.append(f"TANGGAL : {tanggal}    JAM : {jam}")
 
-    # HITUNG UKURAN TEKS
+    # hitung ukuran teks
     max_width = 0
     total_height = 0
 
@@ -62,18 +81,20 @@ if uploaded_file and bumdes and lokasi and keterangan:
     x = int(img.width * 0.02)
     y = img.height - total_height - (padding * 3)
 
-    # BACKGROUND KOTAK
+    # kotak background
     draw.rectangle(
         (x-padding, y-padding, x+max_width+padding, y+total_height+padding),
         fill=(0,0,0)
     )
 
-    # TULIS TEKS
+    # tulis teks
     current_y = y
     for line in lines:
         draw.text((x, current_y), line, fill="white", font=font)
+
         bbox = font.getbbox(line)
         line_height = bbox[3] - bbox[1]
+
         current_y += line_height + 5
 
     st.image(img)
@@ -82,7 +103,7 @@ if uploaded_file and bumdes and lokasi and keterangan:
     img.save(buffer, format="JPEG")
     buffer.seek(0)
 
-    # NAMA FILE OTOMATIS
+    # nama file otomatis dari BUMDES
     nama_file = bumdes.replace(" ", "_")
     nama_file = "".join(c for c in nama_file if c.isalnum() or c == "_")
 
