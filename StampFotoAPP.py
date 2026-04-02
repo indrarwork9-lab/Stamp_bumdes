@@ -4,6 +4,13 @@ from datetime import datetime
 from io import BytesIO
 
 st.title("Stamp Foto Dokumentasi BUMDES")
+now = datetime.now()
+timestamp = now.strftime("%Y%m%d_%H%M%S")
+
+nama_file = bumdes.replace(" ", "_")
+nama_file = "".join(c for c in nama_file if c.isalnum() or c == "_")
+
+file_name = f"{nama_file}_{timestamp}.jpg"
 
 uploaded_file = st.file_uploader("Upload Foto", type=["jpg","jpeg","png"])
 
@@ -58,8 +65,9 @@ if uploaded_file and bumdes and lokasi and keterangan:
     buffer.seek(0)
 
     st.download_button(
-        "Download Foto",
-        data=buffer,
-        file_name="foto_dokumentasi.jpg",
-        mime="image/jpeg"
+    "Download Foto",
+    data=buffer,
+    file_name=file_name,
+    mime="image/jpeg"
+        
     )
