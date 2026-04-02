@@ -16,7 +16,7 @@ if uploaded_file and bumdes and lokasi and keterangan:
     img = Image.open(uploaded_file)
     draw = ImageDraw.Draw(img)
 
-    font = ImageFont.truetype("DejaVuSans-Bold.ttf", 40)
+    font = ImageFont.truetype("DejaVuSans-Bold.ttf", 35)
 
     now = datetime.now()
     tanggal = now.strftime("%d-%m-%Y")
