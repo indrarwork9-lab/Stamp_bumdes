@@ -4,13 +4,6 @@ from datetime import datetime
 from io import BytesIO
 
 st.title("Stamp Foto Dokumentasi BUMDES")
-now = datetime.now()
-timestamp = now.strftime("%Y%m%d_%H%M%S")
-
-nama_file = bumdes.replace(" ", "_")
-nama_file = "".join(c for c in nama_file if c.isalnum() or c == "_")
-
-file_name = f"{nama_file}_{timestamp}.jpg"
 
 uploaded_file = st.file_uploader("Upload Foto", type=["jpg","jpeg","png"])
 
@@ -32,6 +25,8 @@ if uploaded_file and bumdes and lokasi and keterangan:
 
     now = datetime.now()
     tanggal = now.strftime("%d-%m-%Y")
+    nama_file = bumdes.replace(" ", "_")
+    nama_file = "".join(c for c in nama_file if c.isalnum() or c == "_")
     jam = now.strftime("%H:%M:%S")
 
     text = (
