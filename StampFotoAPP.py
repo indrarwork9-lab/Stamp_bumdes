@@ -16,7 +16,12 @@ if uploaded_file and bumdes and lokasi and keterangan:
     img = Image.open(uploaded_file)
     draw = ImageDraw.Draw(img)
 
-    font = ImageFont.truetype("DejaVuSans-Bold.ttf", 35)
+    font_size = int(img.height / 25)
+
+    try:
+        font = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
+    except:
+        font = ImageFont.load_default()
 
     now = datetime.now()
     tanggal = now.strftime("%d-%m-%Y")
@@ -34,9 +39,10 @@ if uploaded_file and bumdes and lokasi and keterangan:
     text_width = bbox[2]-bbox[0]
     text_height = bbox[3]-bbox[1]
 
-    padding = 20
-    x = 30
-    y = img.height - text_height - 80
+    padding = int(font_size / 2)
+
+    x = int(img.width * 0.02)
+    y = img.height - text_height - (padding * 3)
 
     draw.rectangle(
         (x-padding, y-padding, x+text_width+padding, y+text_height+padding),
