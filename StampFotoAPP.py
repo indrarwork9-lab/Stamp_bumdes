@@ -2,6 +2,7 @@ import streamlit as st
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
 from io import BytesIO
+import textwrap
 
 st.title("Stamp Foto Dokumentasi BUMDES")
 
@@ -16,9 +17,9 @@ if uploaded_file and bumdes and lokasi and keterangan:
     img = Image.open(uploaded_file)
     draw = ImageDraw.Draw(img)
 
-    # AUTO RESIZE FONT STABIL
-    font_size = int(min(img.width, img.height) / 30)
-    font_size = max(20, min(font_size, 60))
+    # AUTO RESIZE FONT
+    font_size = int(min(img.width, img.height) / 28)
+    font_size = max(20, min(font_size, 55))
 
     try:
         font = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
@@ -29,22 +30,28 @@ if uploaded_file and bumdes and lokasi and keterangan:
     tanggal = now.strftime("%d-%m-%Y")
     jam = now.strftime("%H:%M:%S")
 
+    # WRAP TEXT AGAR TIDAK TERLALU PANJANG
+    wrap_width = 40
+    ket_wrap = "\n".join(textwrap.wrap(keterangan, wrap_width))
+
     text = (
         f"BUMDES : {bumdes}\n"
         f"LOKASI : {lokasi}\n"
-        f"KETERANGAN : {keterangan}\n"
+        f"KETERANGAN : {ket_wrap}\n"
         f"TANGGAL : {tanggal}    JAM : {jam}"
     )
 
-    # HITUNG UKURAN TEKS (ANTI ERROR STREAMLIT CLOUD)
-    text_width, text_height = draw.multiline_textsize(text, font=font)
+    # HITUNG UKURAN TEKS (PALING STABIL)
+    bbox = font.getbbox(text)
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
 
     padding = int(font_size / 2)
 
     x = int(img.width * 0.02)
     y = img.height - text_height - (padding * 3)
 
-    # KOTAK HITAM BACKGROUND
+    # BACKGROUND KOTAK HITAM
     draw.rectangle(
         (x-padding, y-padding, x+text_width+padding, y+text_height+padding),
         fill=(0,0,0)
@@ -59,7 +66,7 @@ if uploaded_file and bumdes and lokasi and keterangan:
     img.save(buffer, format="JPEG")
     buffer.seek(0)
 
-    # NAMA FILE DARI BUMDES
+    # NAMA FILE OTOMATIS
     nama_file = bumdes.replace(" ", "_")
     nama_file = "".join(c for c in nama_file if c.isalnum() or c == "_")
 
