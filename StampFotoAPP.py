@@ -24,12 +24,7 @@ try:
     font = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
 except:
     font = ImageFont.load_default()
-
-    try:
-        font = ImageFont.truetype("DejaVuSans-Bold.ttf", font_size)
-    except:
-        font = ImageFont.load_default()
-
+    
     now = datetime.now()
     tanggal = now.strftime("%d-%m-%Y")
     jam = now.strftime("%H:%M:%S")
