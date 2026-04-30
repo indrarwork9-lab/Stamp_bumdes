@@ -63,7 +63,7 @@ if uploaded_file and bumdes and lokasi and keterangan:
     ket_lines = wrap_text(draw, f"KETERANGAN : {keterangan}", font, max_text_width)
 
     lines = []
-    lines.append(f"BUMDES : {bumdes}")
+    lines.append(f"MITRA : {bumdes}")
     lines.extend(lokasi_lines)
     lines.extend(ket_lines)
     lines.append(f"TANGGAL : {tanggal}")
