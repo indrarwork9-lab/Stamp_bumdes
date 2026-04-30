@@ -32,6 +32,9 @@ bumdes = st.text_input("Nama BUMDES")
 lokasi = st.text_input("Lokasi / Alamat")
 keterangan = st.text_input("Keterangan")
 
+# INPUT TANGGAL MANUAL
+tanggal_input = st.date_input("Pilih Tanggal")
+
 if uploaded_file and bumdes and lokasi and keterangan:
 
     img = Image.open(uploaded_file)
@@ -46,8 +49,11 @@ if uploaded_file and bumdes and lokasi and keterangan:
     except:
         font = ImageFont.load_default()
 
+    # tanggal dari input user
+    tanggal = tanggal_input.strftime("%d-%m-%Y")
+
+    # jam tetap otomatis
     now = datetime.now()
-    tanggal = now.strftime("%d-%m-%Y")
     jam = now.strftime("%H:%M:%S")
 
     max_text_width = int(img.width * 0.9)
